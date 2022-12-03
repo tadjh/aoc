@@ -1,8 +1,12 @@
-// deno run --watch --allow-all b.ts
+// deno run --watch --allow-all a.ts
 
 export {};
 const input = await Deno.readTextFile("test.txt");
-const arr = input.split("");
+const arr = input.split("") as string[];
+
+const _lookup = {
+  "": 0,
+};
 
 let output = "";
 
