@@ -2,18 +2,14 @@
 
 export {};
 const input = await Deno.readTextFile("test.txt");
-const arr = input.split("") as string[]; // .split("\r\n").map((el) => el.split("")) as string[][];
+const lines = input.split("\r\n") as string[];
 
-console.log(arr);
+console.log(lines);
 
 let output = "";
 
-const _lookup = {
-  "": 0,
-};
-
-for (let i = 0; i < arr.length; i++) {
-  output += arr[i];
+for (const line of lines) {
+  output += line;
 }
 
 console.log(output);
