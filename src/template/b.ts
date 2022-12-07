@@ -1,4 +1,4 @@
-// deno run --watch --allow-all a.ts
+// deno run --watch --allow-all b.ts
 
 export {};
 const input = await Deno.readTextFile("test.txt");
