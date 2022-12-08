@@ -52,7 +52,7 @@ function visibilityScore(row = 0, col = 0): number {
   return 0;
 }
 
-const output = lines.map((row, rowIndex) =>
+lines.map((row, rowIndex) =>
   row.map((_col, colIndex) => visibilityScore(rowIndex, colIndex))
 );
 

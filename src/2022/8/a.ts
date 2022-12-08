@@ -81,7 +81,7 @@ function isVisible(row = 0, col = 0) {
   return false;
 }
 
-const output = lines.map((row, rowIndex) =>
+lines.map((row, rowIndex) =>
   row.map((_col, colIndex) => isVisible(rowIndex, colIndex))
 );
 
