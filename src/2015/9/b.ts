@@ -52,7 +52,7 @@ function getDistances(permutations: string[][]) {
   return distances;
 }
 
-function getLowest(distances: number[]) {
+function _getLowest(distances: number[]) {
   let min = -1;
   for (const dist of distances) {
     if (min === -1) {
