@@ -1,15 +1,6 @@
 // deno run --watch --allow-all a.ts
 
-export {};
-const input = await Deno.readTextFile("test.txt");
-const lines = input.split("\r\n") as string[];
-
-console.log(lines);
-
-let output = "";
-
-for (const line of lines) {
-  output += line;
-}
+const input = await Deno.readTextFile("a.test.txt");
+const output = input.split("\r\n");
 
 console.log(output);
