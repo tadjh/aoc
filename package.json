@@ -18,9 +18,8 @@
   },
   "homepage": "https://github.com/tadjh/aoc22#readme",
   "devDependencies": {
-    "@types/node": "^20.10.2",
-    "prettier": "^3.1.0",
-    "typescript": "^5.3.2"
+    "@types/node": "^22.10.1",
+    "prettier": "^3.4.1",
+    "typescript": "^5.7.2"
   }
 }
-
