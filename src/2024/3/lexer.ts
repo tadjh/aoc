@@ -4,19 +4,18 @@ export enum TokenType {
   Comma = "Comma",
   OpenParenthesis = "OpenParenthesis",
   CloseParenthesis = "CloseParenthesis",
-  Unknown = "Unknown",
   EOF = "EOF",
 }
 
-export type Token = {
+export interface Token {
   type: TokenType;
   value: string;
-};
+}
 
 export class Lexer {
   private input: string;
   private position: number = 0;
-  private validIdentifiers = ["mul", "do", "don't"];
+  private identifiers: string[] = ["mul", "do", "don't"];
 
   constructor(input: string) {
     this.input = input.trim();
@@ -27,7 +26,7 @@ export class Lexer {
   }
 
   private advance(): string {
-    return this.input[this.position++] || "";
+    return this.position < this.input.length ? this.input[this.position++] : "";
   }
 
   public nextToken(): Token {
@@ -67,48 +66,46 @@ export class Lexer {
         `Unexpected character: "${char}" at position ${this.position}`
       );
       this.advance();
-      return { type: TokenType.Unknown, value: char };
+      return this.nextToken();
     }
 
     return { type: TokenType.EOF, value: "" };
   }
 
   private readIdentifier(): Token {
-    let identifier = "";
+    let value = "";
 
     while (/[a-zA-Z_']/.test(this.peek())) {
-      identifier += this.advance();
+      value += this.advance();
     }
 
-    if (this.validIdentifiers.includes(identifier)) {
-      return { type: TokenType.Identifier, value: identifier };
-    } else if (
-      this.validIdentifiers.some(
+    if (this.identifiers.includes(value)) {
+      return { type: TokenType.Identifier, value };
+    }
+
+    if (
+      this.identifiers.some(
         (id) =>
-          !identifier.startsWith(id) &&
-          identifier.includes(id) &&
-          identifier.endsWith(id)
+          !value.startsWith(id) && value.includes(id) && value.endsWith(id)
       )
     ) {
-      identifier = this.validIdentifiers.find(
+      value = this.identifiers.find(
         (id) =>
-          !identifier.startsWith(id) &&
-          identifier.includes(id) &&
-          identifier.endsWith(id)
+          !value.startsWith(id) && value.includes(id) && value.endsWith(id)
       )!;
-      return { type: TokenType.Identifier, value: identifier };
-    } else {
-      console.error(`Invalid identifier detected: "${identifier}"`);
-      return this.nextToken();
+      return { type: TokenType.Identifier, value };
     }
+
+    console.error(`Invalid identifier detected: "${value}"`);
+    return this.nextToken();
   }
 
-  private readNumber(): Token {
-    let number = "";
+  private readNumber() {
+    let value = "";
     while (/[0-9]/.test(this.peek())) {
-      number += this.advance();
+      value += this.advance();
     }
-    return { type: TokenType.Number, value: number };
+    return { type: TokenType.Number, value };
   }
 }
 

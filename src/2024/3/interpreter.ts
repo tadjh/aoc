@@ -3,8 +3,6 @@ import { ASTNode } from "./parser.ts";
 export class Interpreter {
   private functions: { [key: string]: (...args: number[]) => number } = {
     mul: (a, b) => a * b,
-    // add: (a, b) => a + b,
-    // sub: (a, b) => a - b,
   };
 
   public evaluate(node: ASTNode): number {

@@ -9,6 +9,7 @@ export interface ASTNode {
 export class Parser {
   private tokens: Token[];
   private position: number = 0;
+  private enabled: boolean = true;
 
   constructor(tokens: Token[]) {
     this.tokens = tokens;
@@ -18,12 +19,8 @@ export class Parser {
     return this.tokens[this.position] || { type: TokenType.EOF, value: "" };
   }
 
-  private consume(): Token {
+  private advance(): Token {
     return this.tokens[this.position++] || { type: TokenType.EOF, value: "" };
-  }
-
-  public parse(): ASTNode {
-    return this.parseExpression();
   }
 
   public parseAll(): ASTNode[] {
@@ -42,10 +39,34 @@ export class Parser {
   }
 
   private parseExpression(): ASTNode {
-    const token = this.consume();
+    const token = this.advance();
 
     if (token.type === TokenType.Identifier) {
-      return this.parseFunctionCall(token);
+      const node = this.parseFunctionCall(token);
+
+      if (node.value === "do") {
+        this.enabled = true;
+        return this.parseExpression();
+      }
+
+      if (node.value === "don't") {
+        this.enabled = false;
+        return this.parseExpression();
+      }
+
+      if (this.enabled === false) {
+        throw new Error(
+          `Unexpected expression: ${token.value}, Enabled is ${this.enabled}`
+        );
+      }
+
+      if (node.arguments && node.arguments?.length < 2) {
+        throw new Error(
+          `Invalid arguments: ${node.value} does not has enough arguments`
+        );
+      }
+
+      return node;
     }
 
     throw new Error(`Unexpected token: ${token.value}`);
@@ -58,7 +79,7 @@ export class Parser {
       arguments: [],
     };
 
-    const nextToken = this.consume();
+    const nextToken = this.advance();
     if (nextToken.type !== TokenType.OpenParenthesis) {
       throw new Error(`Expected '(', found: ${nextToken.value}`);
     }
@@ -66,27 +87,24 @@ export class Parser {
     while (this.peek().type !== TokenType.CloseParenthesis) {
       // Skip comma
       if (this.peek().type === TokenType.Comma) {
-        this.consume();
+        this.advance();
         continue;
       }
 
       node.arguments!.push(this.parseArgument());
     }
 
-    const closingParenthesis = this.consume();
+    const closingParenthesis = this.advance();
+
     if (closingParenthesis.type !== TokenType.CloseParenthesis) {
       throw new Error(`Expected ')', found: ${closingParenthesis.value}`);
-    }
-
-    if (!node.arguments?.length || node.arguments.length < 2) {
-      throw new Error("Not enough valid arguments");
     }
 
     return node;
   }
 
   private parseArgument(): ASTNode {
-    const token = this.consume();
+    const token = this.advance();
 
     if (token.type === TokenType.Number) {
       return { type: "NumberLiteral", value: token.value };
@@ -104,7 +122,7 @@ export class Parser {
       this.peek().type !== TokenType.EOF &&
       this.peek().type !== TokenType.Identifier
     ) {
-      this.consume();
+      this.advance();
     }
   }
 }
