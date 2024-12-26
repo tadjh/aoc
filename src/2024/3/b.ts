@@ -1,27 +1,20 @@
 // deno run --watch --allow-all b.ts
 
 import { Interpreter } from "./interpreter.ts";
-import { Lexer, Token, TokenType } from "./lexer.ts";
+import { Lexer } from "./lexer.ts";
 import { Parser } from "./parser.ts";
 
+console.log("test");
 const input = await Deno.readTextFile("input.txt");
 
-const lexer = new Lexer(input);
-const tokens: Token[] = [];
-let token: Token;
+const tokens = new Lexer(input).parseAll();
 
-do {
-  token = lexer.nextToken();
-  tokens.push(token);
-} while (token.type !== TokenType.EOF);
+// await Deno.writeTextFile("lexer.output.txt", JSON.stringify(tokens, null, 2));
 
-// console.log("Tokens:", tokens);
+const asts = new Parser(tokens).parseAll();
 
-const parser = new Parser(tokens);
-const asts = parser.parseAll();
+// await Deno.writeTextFile("parser.output.txt", JSON.stringify(asts, null, 2));
 
-// console.log("ASTs:", JSON.stringify(asts, null, 2));
+const totalResult = new Interpreter(asts).evaluateAll();
 
-const interpreter = new Interpreter();
-const totalResult = interpreter.evaluateAll(asts);
 console.log("Total Result of All Evaluations:", totalResult);

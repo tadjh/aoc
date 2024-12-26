@@ -1,10 +1,8 @@
 import { Token, TokenType } from "./lexer.ts";
 
-export interface ASTNode {
-  type: string;
-  value?: string;
-  arguments?: ASTNode[];
-}
+export type ASTNode =
+  | { id: number; type: "NumberLiteral"; value?: string }
+  | { id: number; type: "FunctionCall"; value: string; arguments: ASTNode[] };
 
 export class Parser {
   private tokens: Token[];
@@ -30,7 +28,15 @@ export class Parser {
       try {
         nodes.push(this.parseExpression());
       } catch (error) {
-        console.error("Skipping invalid syntax:", (error as Error).message);
+        const message = (error as Error).message;
+        if (
+          !message.startsWith("Unexpected token") &&
+          !message.startsWith("Skipping expression") &&
+          !message.startsWith("Expected '('")
+        ) {
+          console.error("Invalid syntax:\n\t", message, "\n");
+        }
+
         this.recover();
       }
     }
@@ -56,32 +62,35 @@ export class Parser {
 
       if (this.enabled === false) {
         throw new Error(
-          `Unexpected expression: ${token.value}, Enabled is ${this.enabled}`
+          `Skipping expression: ${token.value} at token ${token.id}, Enabled is ${this.enabled}`
         );
       }
 
-      if (node.arguments && node.arguments?.length < 2) {
+      if (node.type === "FunctionCall" && node.arguments.length < 2) {
         throw new Error(
-          `Invalid arguments: ${node.value} does not has enough arguments`
+          `Invalid arguments: ${node.value} does not has enough arguments at token ${token.id}`
         );
       }
 
       return node;
     }
 
-    throw new Error(`Unexpected token: ${token.value}`);
+    throw new Error(`Unexpected token: ${token.value} at token ${token.id}`);
   }
 
   private parseFunctionCall(identifierToken: Token): ASTNode {
     const node: ASTNode = {
+      id: this.position,
       type: "FunctionCall",
       value: identifierToken.value,
       arguments: [],
     };
 
-    const nextToken = this.advance();
-    if (nextToken.type !== TokenType.OpenParenthesis) {
-      throw new Error(`Expected '(', found: ${nextToken.value}`);
+    const openParenthesis = this.advance();
+    if (openParenthesis.type !== TokenType.OpenParenthesis) {
+      throw new Error(
+        `Expected '(', found: ${openParenthesis.value} at token ${openParenthesis.id}`
+      );
     }
 
     while (this.peek().type !== TokenType.CloseParenthesis) {
@@ -95,9 +104,10 @@ export class Parser {
     }
 
     const closingParenthesis = this.advance();
-
     if (closingParenthesis.type !== TokenType.CloseParenthesis) {
-      throw new Error(`Expected ')', found: ${closingParenthesis.value}`);
+      throw new Error(
+        `Expected ')', found: ${closingParenthesis.value} at token ${closingParenthesis.id}`
+      );
     }
 
     return node;
@@ -107,7 +117,7 @@ export class Parser {
     const token = this.advance();
 
     if (token.type === TokenType.Number) {
-      return { type: "NumberLiteral", value: token.value };
+      return { id: this.position, type: "NumberLiteral", value: token.value };
     }
 
     if (token.type === TokenType.Identifier) {
@@ -126,4 +136,3 @@ export class Parser {
     }
   }
 }
-

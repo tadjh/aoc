@@ -4,10 +4,12 @@ export enum TokenType {
   Comma = "Comma",
   OpenParenthesis = "OpenParenthesis",
   CloseParenthesis = "CloseParenthesis",
+  Unknown = "Unknown",
   EOF = "EOF",
 }
 
 export interface Token {
+  id: number;
   type: TokenType;
   value: string;
 }
@@ -29,12 +31,24 @@ export class Lexer {
     return this.position < this.input.length ? this.input[this.position++] : "";
   }
 
+  public parseAll(): Token[] {
+    const tokens: Token[] = [];
+    let token: Token;
+
+    do {
+      token = this.nextToken();
+      tokens.push(token);
+    } while (token.type !== TokenType.EOF);
+
+    return tokens;
+  }
+
   public nextToken(): Token {
     while (this.position < this.input.length) {
       const char = this.peek();
 
-      // Skip whitespace
       if (/\s/.test(char)) {
+        // Skip whitespace
         this.advance();
         continue;
       }
@@ -49,27 +63,35 @@ export class Lexer {
 
       if (char === "(") {
         this.advance();
-        return { type: TokenType.OpenParenthesis, value: "(" };
+        return {
+          id: this.position,
+          type: TokenType.OpenParenthesis,
+          value: "(",
+        };
       }
 
       if (char === ")") {
         this.advance();
-        return { type: TokenType.CloseParenthesis, value: ")" };
+        return {
+          id: this.position,
+          type: TokenType.CloseParenthesis,
+          value: ")",
+        };
       }
 
       if (char === ",") {
         this.advance();
-        return { type: TokenType.Comma, value: "," };
+        return { id: this.position, type: TokenType.Comma, value: "," };
       }
 
-      console.error(
-        `Unexpected character: "${char}" at position ${this.position}`
-      );
+      // console.error(
+      //   `Unexpected character: "${char}" at position ${this.position}`
+      // );
       this.advance();
-      return this.nextToken();
+      return { id: this.position, type: TokenType.Unknown, value: char };
     }
 
-    return { type: TokenType.EOF, value: "" };
+    return { id: this.position, type: TokenType.EOF, value: "" };
   }
 
   private readIdentifier(): Token {
@@ -80,7 +102,7 @@ export class Lexer {
     }
 
     if (this.identifiers.includes(value)) {
-      return { type: TokenType.Identifier, value };
+      return { id: this.position, type: TokenType.Identifier, value };
     }
 
     if (
@@ -93,11 +115,13 @@ export class Lexer {
         (id) =>
           !value.startsWith(id) && value.includes(id) && value.endsWith(id)
       )!;
-      return { type: TokenType.Identifier, value };
+      return { id: this.position, type: TokenType.Identifier, value };
     }
 
-    console.error(`Invalid identifier detected: "${value}"`);
-    return this.nextToken();
+    return { id: this.position, type: TokenType.Unknown, value };
+
+    // console.error(`Invalid identifier detected: "${value}"`);
+    // return this.nextToken();
   }
 
   private readNumber() {
@@ -105,7 +129,6 @@ export class Lexer {
     while (/[0-9]/.test(this.peek())) {
       value += this.advance();
     }
-    return { type: TokenType.Number, value };
+    return { id: this.position, type: TokenType.Number, value };
   }
 }
-

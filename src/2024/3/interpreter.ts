@@ -1,9 +1,19 @@
 import { ASTNode } from "./parser.ts";
 
 export class Interpreter {
+  private nodes: ASTNode[];
+  private position: number = 0;
   private functions: { [key: string]: (...args: number[]) => number } = {
     mul: (a, b) => a * b,
   };
+
+  constructor(asts: ASTNode[]) {
+    this.nodes = asts;
+  }
+
+  private advance() {
+    return this.nodes[this.position++];
+  }
 
   public evaluate(node: ASTNode): number {
     if (node.type === "NumberLiteral") {
@@ -21,27 +31,25 @@ export class Interpreter {
       return func(...args);
     }
 
-    throw new Error(`Unknown node type: ${node.type}`);
+    throw new Error(`Unknown node type: ${JSON.stringify(node, null, 2)}`);
   }
 
-  public evaluateAll(asts: ASTNode[]): number {
-    return asts.reduce((total, ast, index) => {
-      try {
-        const result = this.evaluate(ast);
-        if (Number.isNaN(result)) {
-          console.log("isNaN", ast);
-        }
+  public evaluateAll(): number {
+    let total = 0;
 
-        console.log(`Result of AST ${index + 1}:`, result);
-        return total + result;
-      } catch (error) {
-        console.error(
-          `Error evaluating AST ${index + 1}:`,
-          (error as Error).message
-        );
-        return total; // Skip errors, add nothing to the total
+    while (this.position < this.nodes.length) {
+      const node = this.advance();
+      const result = this.evaluate(node);
+
+      if (Number.isNaN(result)) {
+        console.log(`isNaN at ${node.id}`);
+        continue;
       }
-    }, 0);
+
+      // console.log(`Result of AST at ${this.position}:`, result);
+      total += result;
+    }
+
+    return total;
   }
 }
-
