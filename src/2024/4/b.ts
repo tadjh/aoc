@@ -1,6 +1,10 @@
 // deno run --watch --allow-all b.ts
 
-const input = await Deno.readTextFile("test.txt");
-const output = input.split("\r\n");
+import { Parser } from "./parser.ts";
 
-console.log(output);
+const input = await Deno.readTextFile("input.txt");
+
+const board = new Parser(input, "MAS", "crossmark");
+const output = board.print();
+
+await Deno.writeTextFile("output.b.txt", output);

@@ -7,7 +7,7 @@ import { Parser } from "./parser.ts";
 const input = await Deno.readTextFile("input.txt");
 // const output = input.split("\n").map((line) => line.split(""));
 
-const board = new Parser(input);
+const board = new Parser(input, "XMAS");
 const output = board.print();
 
 await Deno.writeTextFile("output.txt", output);
