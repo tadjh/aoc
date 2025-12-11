@@ -1,0 +1,15 @@
+[package]
+name = "aoc"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+# Advent of Code 2025 binaries
+[[bin]]
+name = "a"
+path = "src/2025/1/a.rs"
+
+[[bin]]
+name = "b"
+path = "src/2025/1/b.rs"
