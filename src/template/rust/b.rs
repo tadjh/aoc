@@ -1,3 +1,7 @@
+use aoc::get_input;
+
 fn main() {
-    println!("Hello, world!");
+    let contents = get_input();
+
+    println!("{:?}", contents);
 }
