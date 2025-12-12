@@ -12,5 +12,11 @@ pub fn get_filename() -> String {
 }
 
 pub fn get_input() -> String {
-    std::fs::read_to_string(get_filename()).expect("Should have been able to read the file")
+    let filename = get_filename();
+    std::fs::read_to_string(filename).expect("Should have been able to read the file")
+}
+
+pub fn update_input(content: &str) {
+    let filename = get_filename();
+    std::fs::write(filename, content).expect("Unable to write to the file");
 }

@@ -1,7 +1,5 @@
-use aoc::get_input;
-
 fn main() {
-    let contents = get_input();
+    let contents = aoc::get_input();
 
     println!("{:?}", contents);
 }
