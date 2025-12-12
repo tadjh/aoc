@@ -2,7 +2,7 @@ use std::fs;
 use std::i64;
 
 fn main() {
-    let contents = fs::read_to_string("test.txt").expect("Should have been able to read the file");
+    let contents = fs::read_to_string("input.txt").expect("Should have been able to read the file");
     let mut total: i64 = 0;
     let ranges: Vec<i64> = contents
         .split(",")
@@ -21,34 +21,34 @@ fn main() {
 
 fn is_repeated(id: i64) -> bool {
     let str = id.to_string();
+    let mut i = 1;
     let max = str.len() / 2;
-    let source = &str[0..max];
-    let test = &str[max..];
+    while i < max + 1 {
+        let source = &str[0..i];
 
-    if source == test {
-        println!("repeated {source}{test}");
-        return true;
+        if str.len() % source.len() != 0 {
+            i += 1;
+            continue;
+        }
+
+        let test = (0..str.len())
+            .step_by(source.len())
+            .all(|x| &str[x..x + source.len()] == source);
+
+        if test {
+            println!("str: {str}, source: {source}, test: {:?}", test);
+            return true;
+        }
+        i += 1;
     }
     return false;
 }
-
-// fn is_leading_zero(id: i64) -> bool {
-//     let str = id.to_string();
-//     let first = &str[0..1];
-//     if first == "0" {
-//         return true;
-//     }
-//     return false;
-// }
 
 fn check_id(id: i64) -> i64 {
     if is_repeated(id) {
         return id;
     }
 
-    // if is_leading_zero(id) {
-    //     return id;
-    // }
     return 0;
 }
 
@@ -61,7 +61,7 @@ fn check_range(range: Vec<i64>) -> Range {
     let mut id = range[0];
     let mut invalid = 0;
     let mut total: i64 = 0;
-    loop {
+    while id <= range[1] {
         let result = check_id(id);
         if result != 0 {
             invalid += 1;
@@ -69,10 +69,6 @@ fn check_range(range: Vec<i64>) -> Range {
         total += result;
 
         id += 1;
-
-        if id > range[1] {
-            break;
-        }
     }
     Range { invalid, total }
 }
