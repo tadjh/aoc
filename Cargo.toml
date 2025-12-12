@@ -8,8 +8,8 @@ edition = "2024"
 # Advent of Code 2025 binaries
 [[bin]]
 name = "a"
-path = "src/2025/1/a.rs"
+path = "src/2025/2/a.rs"
 
 [[bin]]
 name = "b"
-path = "src/2025/1/b.rs"
+path = "src/2025/2/b.rs"
