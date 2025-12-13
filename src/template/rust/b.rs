@@ -1,5 +1,5 @@
 fn main() {
-    let contents = aoc::get_input();
+    let input = aoc::get_input();
 
-    println!("{:?}", contents);
+    println!("{:?}", input);
 }

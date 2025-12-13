@@ -4,12 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+regex = "1.12.2"
 
 # Advent of Code 2025 binaries
 [[bin]]
 name = "a"
-path = "src/2025/3/a.rs"
+path = "src/2025/5/a.rs"
 
 [[bin]]
 name = "b"
-path = "src/2025/3/b.rs"
+path = "src/2025/5/b.rs"
