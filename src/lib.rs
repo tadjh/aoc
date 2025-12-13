@@ -37,6 +37,6 @@ pub fn grid_to_string(grid: Vec<Vec<char>>) -> String {
         .join("\r\n")
 }
 
-pub fn string_to_integer(str: &str) -> u32 {
-    str.parse::<u32>().expect("Should be a valid integer")
+pub fn string_to_integer(str: &str) -> u64 {
+    str.parse::<u64>().expect("Should be a valid integer")
 }
