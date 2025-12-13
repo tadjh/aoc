@@ -32,7 +32,7 @@ fn find_highest_digit(bank: &Vec<char>, remain: usize, start: usize) -> Digit {
     }
 }
 
-fn find_joltage(bank: Vec<char>, digits: usize) -> u32 {
+fn find_joltage(bank: Vec<char>, digits: usize) -> u64 {
     let mut i: usize = digits;
     let mut joltage: Vec<char> = vec![];
     let mut start = 0;
@@ -49,11 +49,11 @@ fn find_joltage(bank: Vec<char>, digits: usize) -> u32 {
     jolt
 }
 
-fn tally_banks(grid: Vec<Vec<char>>) -> u32 {
-    let mut total: u32 = 0;
+fn tally_banks(grid: Vec<Vec<char>>) -> u64 {
+    let mut total = 0;
     let mut i: usize = 0;
     while i < grid.len() {
-        total += find_joltage(grid[i].clone(), 2);
+        total += find_joltage(grid[i].clone(), 12);
         i += 1;
     }
     total
