@@ -20,3 +20,17 @@ pub fn update_input(content: &str) {
     let filename = get_filename();
     std::fs::write(filename, content).expect("Unable to write to the file");
 }
+
+pub fn string_to_grid(contents: String) -> Vec<Vec<char>> {
+    contents
+        .lines()
+        .map(|line| line.chars().collect())
+        .collect()
+}
+
+pub fn grid_to_string(grid: Vec<Vec<char>>) -> String {
+    grid.into_iter()
+        .map(String::from_iter)
+        .collect::<Vec<String>>()
+        .join("\r\n")
+}
