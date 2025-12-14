@@ -1,5 +1,6 @@
 fn main() {
     let input = aoc::get_input();
+    let output = input;
 
-    println!("{:?}", input);
+    println!("{:?}", output);
 }
