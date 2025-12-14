@@ -6,6 +6,6 @@ fn main() {
     println!("output: {:?}", output);
 }
 
-fn score(parsed: &str) -> &str {
+fn score(parsed: String) -> String {
     parsed
 }

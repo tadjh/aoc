@@ -9,8 +9,8 @@ regex = "1.12.2"
 # Advent of Code 2025 binaries
 [[bin]]
 name = "a"
-path = "src/2025/6/a.rs"
+path = "src/2025/7/a.rs"
 
 [[bin]]
 name = "b"
-path = "src/2025/6/b.rs"
+path = "src/2025/7/b.rs"
