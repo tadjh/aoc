@@ -1,7 +1,11 @@
 fn main() {
     let input = aoc::get_input();
-    let result = input;
-    let output = result;
+    let parsed = input;
+    let output = score(parsed);
 
     println!("output: {:?}", output);
+}
+
+fn score(parsed: &str) -> &str {
+    parsed
 }

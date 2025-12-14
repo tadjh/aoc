@@ -1,5 +1,3 @@
-use regex::Regex;
-
 pub fn get_filename() -> String {
     let args: Vec<String> = std::env::args().collect();
 
@@ -11,14 +9,17 @@ pub fn get_filename() -> String {
 }
 
 pub fn get_input() -> String {
-    let filename = get_filename();
-    std::fs::read_to_string(&filename).expect(&format!("Unable to read the file: {}", filename))
+    match std::fs::read_to_string(get_filename()) {
+        Ok(file) => file,
+        Err(error) => panic!("Problem opening the file: {error:?}"),
+    }
 }
 
-pub fn update_input(content: &str) {
-    let filename = get_filename();
-    std::fs::write(&filename, content)
-        .expect(&format!("Unable to write to the file: {}", filename));
+pub fn update_input(content: &str) -> () {
+    match std::fs::write(get_filename(), content) {
+        Ok(_) => (),
+        Err(error) => panic!("Problem writing to file: {error:?}"),
+    }
 }
 
 pub fn string_to_grid(str: String) -> Vec<Vec<char>> {
@@ -26,8 +27,10 @@ pub fn string_to_grid(str: String) -> Vec<Vec<char>> {
 }
 
 pub fn input_to_paragraphs(input: String) -> Vec<String> {
-    let re = Regex::new(r"(\r\n|\n|\r){2,}").expect("Invalid regex");
-    re.split(&input).map(|s| s.to_string()).collect()
+    match regex::Regex::new(r"r\n|\n|\r){2,}") {
+        Ok(re) => re.split(&input).map(|s| s.to_string()).collect(),
+        Err(error) => panic!("Problem creating regex: {error:?}"),
+    }
 }
 
 pub fn grid_to_string(grid: Vec<Vec<char>>) -> String {
@@ -38,5 +41,8 @@ pub fn grid_to_string(grid: Vec<Vec<char>>) -> String {
 }
 
 pub fn string_to_integer(str: &str) -> u64 {
-    str.parse::<u64>().expect("Should be a valid integer")
+    match str.parse::<u64>() {
+        Ok(num) => num,
+        Err(error) => panic!("Problem converting string to u64: {error:?}"),
+    }
 }
